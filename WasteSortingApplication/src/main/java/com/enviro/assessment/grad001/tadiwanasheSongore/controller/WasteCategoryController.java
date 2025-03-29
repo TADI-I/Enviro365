@@ -15,30 +15,35 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-import java.util.Optional;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
+@CrossOrigin(origins = "http://localhost:3001")
 @RestController
 @RequestMapping("/api/waste-categories")
 public class WasteCategoryController {
-    @Autowired
-    private WasteCategoryService service;
+
+    private final WasteCategoryService service;
+
+    public WasteCategoryController(WasteCategoryService service) {
+        this.service = service;
+    }
 
     @GetMapping
-    public List<WasteCategory> getAllCategories() {
-        return service.getAllCategories();
+    public ResponseEntity<List<WasteCategory>> getAllCategories() {
+        return ResponseEntity.ok(service.getAllCategories());
+    }
+
+    @PostMapping
+    public ResponseEntity<WasteCategory> createCategory(@RequestBody WasteCategory category) {
+        return ResponseEntity.ok(service.createCategory(category));
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<WasteCategory> getCategoryById(@PathVariable Long id) {
-        Optional<WasteCategory> category = service.getCategoryById(id);
-        return category.map(ResponseEntity::ok)
-                       .orElseGet(() -> ResponseEntity.notFound().build());
-    }
-
-    @PostMapping
-    public WasteCategory createCategory(@Valid @RequestBody WasteCategory category) {
-        return service.saveCategory(category);
+        return ResponseEntity.ok(service.getCategoryById(id));
     }
 
     @DeleteMapping("/{id}")
@@ -47,3 +52,4 @@ public class WasteCategoryController {
         return ResponseEntity.noContent().build();
     }
 }
+
